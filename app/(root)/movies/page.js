@@ -27,7 +27,7 @@ const Page = () => {
         setState(dataJ.results);
         console.log("dataa: ", dataJ);
 
-        setTotalPages(dataJ.total_pages);
+        setTotalPages(Math.trunc(dataJ.total_pages / 2900));
       } catch (error) {
         console.error("Error fetching movies data: ", error);
       }

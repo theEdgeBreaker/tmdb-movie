@@ -1,8 +1,40 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
+import Genre from "@/app/components/Genre";
+import useGenre from "@/app/useGenre";
+import Pagination from "@/app/components/Pagination";
+import MovieCard from "@/app/components/MovieCard";
 
-const page = () => {
+const Page = () => {
+  const [state, setState] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [genre, setGenre] = useState([]);
+  const [value, setValue] = useState([]);
+  const genreURL = useGenre(value);
+  const apiKey = process.env.NEXT_PUBLIC_TRENDING_KEY;
+
+  useEffect(() => {
+    const fetchTrending = async () => {
+      try {
+        const data = await fetch(
+          `https://api.themoviedb.org/3/discover/tv?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${page}&with_genres=${genreURL}`
+        );
+        const dataJ = await data.json();
+        setState(dataJ.results);
+        console.log("dataa: ", dataJ);
+
+        setTotalPages(Math.trunc(dataJ.total_pages / 550));
+      } catch (error) {
+        console.error("Error fetching movies data: ", error);
+      }
+    };
+
+    fetchTrending();
+  }, [page, apiKey, genreURL]);
+
   return (
     <div>
       <Header />
@@ -12,10 +44,39 @@ const page = () => {
             <h4 className="text-4xl font-bold underline">TV Series</h4>
           </div>
         </div>
+        <Genre
+          genre={genre}
+          setGenre={setGenre}
+          setPage={setPage}
+          type="tv"
+          value={value}
+          setValue={setValue}
+        />
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
+          gap-7 md:gap-8 2xl:gap-10 
+          px-10 md:px-14 xl:px-22 2xl:px-32 
+          pt-6 sm:pt-12 2xl:pt-8
+          pb-72 lg:pb-60 
+          relative"
+        >
+          {state.map((item, index) => (
+            <div
+              className=" py-3.5 px-3.5  bg-gray-800 rounded-2xl "
+              key={item.id}
+              style={{
+                height: "100%",
+              }}
+            >
+              <MovieCard item={item} index={index} />
+            </div>
+          ))}
+          <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+        </div>
       </div>
       <Footer />
     </div>
   );
 };
 
-export default page;
+export default Page;
