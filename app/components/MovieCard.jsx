@@ -9,7 +9,7 @@ const MovieCard = ({ item, index }) => {
     <div>
       <div className="flex flex-col items-center justify-center">
         <Image
-          className="rounded-2xl  h-[19rem]  sm:h-[21.5rem] lg:h-[15.5rem] xl:h-[22rem] 2xl:h-[23.5rem]
+          className="rounded-2xl  h-[19rem]  sm:h-[21.5rem] lg:h-[15.5rem] xl:h-[23.5rem] 2xl:h-[23.5rem]
           object-cover object-left-top"
           src={
             item.poster_path ? `${img_300}/${item.poster_path}` : unavailable
