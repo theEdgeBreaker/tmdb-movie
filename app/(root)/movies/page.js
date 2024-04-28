@@ -5,7 +5,6 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import Genre from "@/app/components/Genre";
 import useGenre from "@/app/useGenre";
-import Image from "next/image";
 import Pagination from "@/app/components/Pagination";
 import MovieCard from "@/app/components/MovieCard";
 
@@ -17,9 +16,6 @@ const Page = () => {
   const [value, setValue] = useState([]);
   const genreURL = useGenre(value);
   const apiKey = process.env.NEXT_PUBLIC_TRENDING_KEY;
-
-  const img_300 = "https://image.tmdb.org/t/p/w300";
-  const unavailable = "https://www.movienewz.com/img/films/poster-holder.jpg";
 
   useEffect(() => {
     const fetchTrending = async () => {
