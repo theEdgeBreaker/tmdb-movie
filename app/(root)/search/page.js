@@ -167,7 +167,7 @@ const Search = () => {
           {content &&
             content.map((item, index) => (
               <div
-                className=" py-3.5 px-3.5 bg-gray-800 rounded-2xl "
+                className=" py-3.5 px-3.5 bg-gray-800 hover:bg-gray-700 ease-out rounded-2xl "
                 key={item.id}
                 style={{
                   height: "100%",

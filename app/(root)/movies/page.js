@@ -57,13 +57,13 @@ const Page = () => {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
           gap-7 md:gap-8 2xl:gap-10 
           px-10 md:px-14 xl:px-22 2xl:px-32 
-          pt-6 sm:pt-12 2xl:pt-8
+          pt-7 sm:pt-10 2xl:pt-8
           pb-72 lg:pb-60 
           relative"
         >
           {state.map((item, index) => (
             <div
-              className=" py-3.5 px-3.5  bg-gray-800 rounded-2xl "
+              className=" py-3.5 px-3.5  bg-gray-800 hover:bg-gray-700 ease-out rounded-2xl "
               key={item.id}
               style={{
                 height: "100%",

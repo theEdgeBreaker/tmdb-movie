@@ -19,7 +19,7 @@ const TrendingMovies = () => {
         setTrendingData(data.results);
         console.log("data:", data);
 
-        setTotalPages(data.total_pages / 100);
+        setTotalPages(Math.trunc(data.total_pages / 65));
       } catch (error) {
         console.error("Error fetching trending data:", error);
       }
@@ -39,8 +39,8 @@ const TrendingMovies = () => {
     >
       {trendingData.map((item, index) => (
         <div
-          className=" py-3.5 px-3.5  bg-gray-800 rounded-2xl "
           key={item.id}
+          className="py-3.5 px-3.5  bg-gray-800 hover:bg-gray-700 ease-out rounded-2xl "
           style={{
             height: "100%",
           }}
@@ -48,7 +48,6 @@ const TrendingMovies = () => {
           <MovieCard item={item} index={index} />
         </div>
       ))}
-
       <Pagination page={page} setPage={setPage} totalPages={totalPages} />
     </div>
   );

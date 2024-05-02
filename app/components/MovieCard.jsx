@@ -1,7 +1,20 @@
 import React from "react";
 import Image from "next/image";
 
+import { useState } from "react";
+import MovieDetailsModal from "./MovieDetailsModal";
+
 const MovieCard = ({ item, index }) => {
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleOpen = () => {
+    setModalOpen(true);
+  };
+
+  const handleClose = () => {
+    setModalOpen(false);
+  };
+
   const img_300 = "https://image.tmdb.org/t/p/w300";
   const unavailable = "https://www.movienewz.com/img/films/poster-holder.jpg";
 
@@ -23,7 +36,17 @@ const MovieCard = ({ item, index }) => {
           }}
           height={200}
           alt="Picture"
+          onClick={handleOpen}
         />
+
+        {isModalOpen && (
+          <MovieDetailsModal
+            onClose={handleClose}
+            item={item}
+            img_300={img_300}
+            unavailable={unavailable}
+          />
+        )}
 
         <div className="pt-3">
           <h5 className="text-center font-semibold md:text-lg xl:text-base">
