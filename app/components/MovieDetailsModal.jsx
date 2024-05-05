@@ -1,13 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Image from "next/image";
 import { IoClose } from "react-icons/io5";
 
 const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
   const [showFullOverview, setShowFullOverview] = useState(false);
+  const [movie, setMovie] = useState({});
+
+  console.log(movie.video, "Video Details");
 
   const handleToggleOverview = () => {
     setShowFullOverview(!showFullOverview);
   };
+
+  // fetching trailer
+
+  const fetchMovieDetails = async (movieId) => {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/movie/${movieId}?api_key=${process.env.NEXT_PUBLIC_TRENDING_KEY}&language=en-US&append_to_response=videos`
+    );
+
+    const movieDetails = await response.json();
+    console.log("movie-details", movieDetails);
+
+    const trailerVideo = movieDetails.videos.results.find(
+      (video) => video.type === "Trailer"
+    );
+    // "https://vimeo.com/yourid"
+    // setMovie({
+    //   ...movieDetails,
+    //   video: {
+    //     ...trailerVideo,
+    //     video_url: `https://www.youtube.com/embed/${trailerVideo.key}`,
+    //   },
+    // });
+
+    setMovie({
+      ...movieDetails,
+      video: {
+        ...trailerVideo,
+        video_url:
+          trailerVideo.site === "YouTube"
+            ? `https://www.youtube.com/embed/${trailerVideo.key}`
+            : `https://vimeo.com/embed/${trailerVideo.key}`,
+      },
+    });
+  };
+
+  console.log(movie, "movie");
 
   return (
     <div
@@ -28,7 +67,6 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
       >
         <Image
           className="
-          
           w-[100%] h-[100%]
            md:w-[40%] md:h-[100%]
           object-cover object-left-top
@@ -40,6 +78,7 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
           width={270}
           height={200}
           alt="Picture"
+          priority={true}
         />
         <span
           className=" text-2xl absolute right-4 sm:right-2 top-3 sm:top-1 z-50"
@@ -48,7 +87,7 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
           <IoClose />
         </span>
 
-        <div className=" absolute md:static inset-0 w-[100%] h-[100%]  md:w-[60%] md:h-[100%] bg-black opacity-85 md:bg-black md:opacity-100  z-40">
+        <div className="absolute overflow-y-auto md:static inset-0 w-[100%] h-[100%]  md:w-[60%] md:h-[100%] bg-black opacity-85 md:bg-black md:opacity-100  z-40">
           <div className="px-10 py-16 sm:py-9 ">
             <h5 className="text-center text-3xl sm:text-4xl md:text-4xl uppercase">
               {item.title || item.name}
@@ -93,6 +132,27 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
                   )}
                 </>
               )}
+
+              <button
+                className="bg-gray-800 px-3 py-2 rounded-md my-3"
+                onClick={() => fetchMovieDetails(item.id)}
+              >
+                Watch Trailer
+              </button>
+
+              <Suspense fallback={<p>Loading video...</p>}>
+                <iframe
+                  width="500"
+                  height="300"
+                  src={movie?.video?.video_url}
+                  title="YouTube video player"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allowfullscreen="true
+                  "
+                />
+              </Suspense>
             </div>
           </div>
         </div>
