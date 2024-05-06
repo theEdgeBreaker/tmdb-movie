@@ -81,7 +81,7 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
           priority={true}
         />
         <span
-          className=" text-2xl absolute right-4 sm:right-2 top-3 sm:top-1 z-50"
+          className=" text-2xl absolute -right-4 sm:right-5 top-3 sm:top-1.5 z-50 text-white"
           onClick={onClose}
         >
           <IoClose />
@@ -89,11 +89,11 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
 
         <div className="absolute overflow-y-auto md:static inset-0 w-[100%] h-[100%]  md:w-[60%] md:h-[100%] bg-black opacity-85 md:bg-black md:opacity-100  z-40">
           <div className="px-10 py-16 sm:py-9 ">
-            <h5 className="text-center text-3xl sm:text-4xl md:text-4xl uppercase">
+            <h5 className="text-center text-3xl sm:text-4xl md:text-4xl uppercase text-white">
               {item.title || item.name}
             </h5>
 
-            <div className="flex pt-7 sm:pt-4 items-center justify-between text-sm sm:text-base">
+            <div className="flex pt-7 sm:pt-4 items-center justify-between text-sm sm:text-base text-white">
               <div>{item.media_type === "tv" ? "TV" : "Movie"}</div>
 
               <div className="">Rating: {item.vote_average.toFixed(1)}</div>
@@ -107,7 +107,7 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
               </div>
             </div>
 
-            <div className="text-sm sm:text-base font-normal pt-7 sm:pt-5 overflow-hidden">
+            <div className="text-sm sm:text-base font-normal pt-7 sm:pt-5 overflow-hidden text-white">
               <div className={`${!showFullOverview ? "line-clamp-6" : ""}`}>
                 <p>{item.overview}</p>
               </div>
@@ -149,8 +149,7 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
                   frameborder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   referrerpolicy="strict-origin-when-cross-origin"
-                  allowfullscreen="true
-                  "
+                  allowfullscreen="true"
                 />
               </Suspense>
             </div>
