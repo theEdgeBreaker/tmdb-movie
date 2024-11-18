@@ -12,9 +12,15 @@ const TrendingMovies = () => {
   useEffect(() => {
     const fetchTrending = async () => {
       try {
+        console.log(
+          `Fetching from URL: https://api.themoviedb.org/3/trending/all/day?api_key=${apiKey}&page=${page}`
+        );
         const response = await fetch(
           `https://api.themoviedb.org/3/trending/all/day?api_key=${apiKey}&page=${page}`
         );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         setTrendingData(data.results);
         console.log("data:", data);

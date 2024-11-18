@@ -16,19 +16,47 @@ const Page = () => {
   const genreURL = useGenre(value);
   const apiKey = process.env.NEXT_PUBLIC_TRENDING_KEY;
 
+  // useEffect(() => {
+  //   const fetchTrending = async () => {
+  //     try {
+  //       const data = await fetch(
+  //         `https://api.themoviedb.org/3/discover/tv?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${page}&with_genres=${genreURL}`
+  //       );
+  //       const dataJ = await data.json();
+  //       setState(dataJ.results);
+  //       console.log("dataa: ", dataJ);
+
+  //       setTotalPages(Math.trunc(dataJ.total_pages / 550));
+  //     } catch (error) {
+  //       console.error("Error fetching movies data: ", error);
+  //     }
+  //   };
+
+  //   fetchTrending();
+  // }, [page, apiKey, genreURL]);
+
   useEffect(() => {
     const fetchTrending = async () => {
       try {
-        const data = await fetch(
+        const response = await fetch(
           `https://api.themoviedb.org/3/discover/tv?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${page}&with_genres=${genreURL}`
         );
-        const dataJ = await data.json();
-        setState(dataJ.results);
-        console.log("dataa: ", dataJ);
 
-        setTotalPages(Math.trunc(dataJ.total_pages / 550));
+        if (!response.ok) {
+          throw new Error(`API error! status: ${response.status}`);
+        }
+
+        const dataJ = await response.json();
+        if (dataJ && Array.isArray(dataJ.results)) {
+          setState(dataJ.results);
+          setTotalPages(Math.trunc(dataJ.total_pages / 550));
+        } else {
+          console.error("Unexpected API response structure:", dataJ);
+          setState([]); // Set fallback state to an empty array
+        }
       } catch (error) {
-        console.error("Error fetching movies data: ", error);
+        console.error("Error fetching TV Series data:", error);
+        setState([]); // Set fallback state to an empty array
       }
     };
 

@@ -16,20 +16,48 @@ const Page = () => {
   const [value, setValue] = useState([]);
   const genreURL = useGenre(value);
   const apiKey = process.env.NEXT_PUBLIC_TRENDING_KEY;
+  console.log("API Key: ", process.env.NEXT_PUBLIC_TRENDING_KEY);
+
+  // useEffect(() => {
+  //   const fetchTrending = async () => {
+  //     try {
+  //       const data = await fetch(
+  //         `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${page}&with_genres=${genreURL}`
+  //       );
+  //       const dataJ = await data.json();
+  //       setState(dataJ.results);
+  //       console.log("dataa: ", dataJ);
+
+  //       setTotalPages(Math.trunc(dataJ.total_pages / 2900));
+  //     } catch (error) {
+  //       console.error("Error fetching movies data: ", error);
+  //     }
+  //   };
+
+  //   fetchTrending();
+  // }, [page, apiKey, genreURL]);
 
   useEffect(() => {
     const fetchTrending = async () => {
       try {
-        const data = await fetch(
-          `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${page}&with_genres=${genreURL}`
+        const response = await fetch(
+          `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&page=${page}&with_genres=${genreURL}`
         );
-        const dataJ = await data.json();
-        setState(dataJ.results);
-        console.log("dataa: ", dataJ);
 
-        setTotalPages(Math.trunc(dataJ.total_pages / 2900));
+        // Parse the response
+        const dataJ = await response.json();
+
+        // Validate the response
+        if (dataJ && dataJ.results && Array.isArray(dataJ.results)) {
+          setState(dataJ.results); // Set the movies list
+          setTotalPages(dataJ.total_pages); // Set total pages for pagination
+        } else {
+          console.error("Unexpected API response structure: ", dataJ);
+          setState([]); // Fallback to an empty array
+        }
       } catch (error) {
         console.error("Error fetching movies data: ", error);
+        setState([]); // Fallback in case of fetch error
       }
     };
 
