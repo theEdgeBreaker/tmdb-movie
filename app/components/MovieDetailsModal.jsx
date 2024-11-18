@@ -12,38 +12,44 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
     setShowFullOverview(!showFullOverview);
   };
 
-  // fetching trailer
+  const fetchMovieDetails = async (movieId, mediaType) => {
+    try {
+      const endpoint = mediaType === "tv" ? "tv" : "movie"; // Determine the correct endpoint
+      const response = await fetch(
+        `https://api.themoviedb.org/3/${endpoint}/${movieId}?api_key=${process.env.NEXT_PUBLIC_TRENDING_KEY}&language=en-US&append_to_response=videos`
+      );
 
-  const fetchMovieDetails = async (movieId) => {
-    const response = await fetch(
-      `https://api.themoviedb.org/3/movie/${movieId}?api_key=${process.env.NEXT_PUBLIC_TRENDING_KEY}&language=en-US&append_to_response=videos`
-    );
+      if (!response.ok) {
+        throw new Error(`API error! status: ${response.status}`);
+      }
 
-    const movieDetails = await response.json();
-    console.log("movie-details", movieDetails);
+      const movieDetails = await response.json();
+      console.log("movie-details", movieDetails);
 
-    const trailerVideo = movieDetails.videos.results.find(
-      (video) => video.type === "Trailer"
-    );
-    // "https://vimeo.com/yourid"
-    // setMovie({
-    //   ...movieDetails,
-    //   video: {
-    //     ...trailerVideo,
-    //     video_url: `https://www.youtube.com/embed/${trailerVideo.key}`,
-    //   },
-    // });
+      const trailerVideo = movieDetails.videos?.results?.find(
+        (video) => video.type === "Trailer"
+      );
 
-    setMovie({
-      ...movieDetails,
-      video: {
-        ...trailerVideo,
-        video_url:
-          trailerVideo.site === "YouTube"
-            ? `https://www.youtube.com/embed/${trailerVideo.key}`
-            : `https://vimeo.com/embed/${trailerVideo.key}`,
-      },
-    });
+      if (!trailerVideo) {
+        console.error("No trailer found for this movie.");
+        setMovie(movieDetails); // Set movie details without video
+        return;
+      }
+
+      setMovie({
+        ...movieDetails,
+        video: {
+          ...trailerVideo,
+          video_url:
+            trailerVideo.site === "YouTube"
+              ? `https://www.youtube.com/embed/${trailerVideo.key}`
+              : `https://vimeo.com/${trailerVideo.key}`,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching movie details:", error);
+      setMovie({});
+    }
   };
 
   console.log(movie, "movie");
@@ -62,7 +68,7 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
         xl:w-[82%] 2xl:w-[68%]
         rounded-lg
         overflow-hidden
-        md:flex 
+        md:flex
         relative"
       >
         <Image
@@ -70,7 +76,7 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
           w-[100%] h-[100%]
            md:w-[40%] md:h-[100%]
           object-cover object-left-top
-           relative   
+           relative
            "
           src={
             item.poster_path ? `${img_300}/${item.poster_path}` : unavailable
@@ -81,7 +87,7 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
           priority={true}
         />
         <span
-          className=" text-2xl absolute -right-4 sm:right-5 top-3 sm:top-1.5 z-50 text-white"
+          className=" text-2xl absolute right-4 sm:right-5 top-3 sm:top-1.5 z-50 text-white"
           onClick={onClose}
         >
           <IoClose />
@@ -133,9 +139,16 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
                 </>
               )}
 
-              <button
+              {/* <button
                 className="bg-gray-800 px-3 py-2 rounded-md my-3"
                 onClick={() => fetchMovieDetails(item.id)}
+              >
+                Watch Trailer
+              </button> */}
+
+              <button
+                className="bg-gray-800 px-3 py-2 rounded-md my-3"
+                onClick={() => fetchMovieDetails(item.id, item.media_type)}
               >
                 Watch Trailer
               </button>
@@ -146,10 +159,10 @@ const MovieDetailsModal = ({ onClose, item, img_300, unavailable }) => {
                   height="300"
                   src={movie?.video?.video_url}
                   title="YouTube video player"
-                  frameborder="0"
+                  // frameborder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerpolicy="strict-origin-when-cross-origin"
-                  allowfullscreen="true"
+                  // referrerpolicy="strict-origin-when-cross-origin"
+                  // allowfullscreen="true"
                 />
               </Suspense>
             </div>
